@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Messy ToDo</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="h-screen bg-gradient-to-br from-gray-800 to-gray-900 flex justify-center items-center">
+  <div class="w-[90%] max-w-md bg-gray-700 rounded-2xl shadow-2xl p-8 text-white">
+    <h1 class="text-4xl font-bold text-center mb-6">Todo List 📝</h1>
+    <div class="flex gap-3 mb-6">
+      <input id="taskInput"
+        class="flex-1 px-5 py-2 rounded-full bg-gray-100 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        type="text" placeholder="Enter a new task...">
+      <button onclick="addTask()"
+        class="bg-blue-500 hover:bg-blue-600 transition-colors px-6 py-2 rounded-full font-semibold">
+        Add
+      </button>
+    </div>
+    <!-- table display notes -->
+    <table class="w-full bg-gray-700 text-white">
+      <div id="message" class="text-green-400 text-center text-xl my-4 hidden">
+        All tasks done! 🎉
+      </div>
+      <thead>
+        <tr>
+          <th class="px-6 py-4 text-left">Name</th>
+          <th class="px-6 py-4 text-center">IsCompleted</th>
+          <th class="px-6 py-4 text-center">Delete</th>
+        </tr>
+      </thead>
+      <tbody id="taskList">
+      </tbody>
+    </table>
+
+  </div>
+
+  <script src="js/index.js"></script>
+</body>
+
+</html>
