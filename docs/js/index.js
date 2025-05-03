@@ -1,78 +1,88 @@
-let data = []; // store of notes
+let data = []; // store data
+const table = document.getElementById("taskList"); // select table
+const message = document.getElementById("message"); // select message completed
 
-const table = document.getElementById("taskList");
-
-const message = document.getElementById("message");
-
-// add task in array
-
+/*
+using add task 
+*/
 function addTask() {
-  const inputElement = document.getElementById("taskInput");
+  const inputEl = document.getElementById("taskInput");
+  const input = inputEl.value.trim();
+  // check input dont null
+  if (!input) return;
 
-  const input = inputElement.value.trim(); // remove space on input
-
-  switch (input) {
-    case "":
-      return;
-
-    default:
-      data.push({
-        name: input,
-
-        isCompleted: false,
-      });
-      inputElement.value = "";
-      displayData();
-  }
+  // object task
+  const task = {
+    name: input,
+    isCompleted: false,
+  };
+  data.push(task);
+  // add task
+  appendTaskToTable(data.length - 1, task);
+  // make input is null
+  inputEl.value = "";
+  // check all message is completed
+  updateMessage();
 }
-// add data from table
-
-function addNotes() {
-  return data.map((note, i) => `
-    <tr class="border-b border-gray-600">
-      <td class="px-6 py-4 ${note.isCompleted ? "completed" : ""}">${note.name}</td>
-      <td class="px-6 py-4 text-center">
-        <button onclick="toggle(${i})" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Toggle</button>
-      </td>
-      <td class="px-6 py-4 text-center">
-        <button onclick="deleteTask(${i})" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete</button>
-      </td>
-    </tr>
-  `).join("");
+/*
+using to append task in table
+*/
+function appendTaskToTable(index, task) {
+  // create row
+  const row = document.createElement("tr");
+  //  set attribute because search on note
+  row.setAttribute("data-index", index);
+  // add class
+  row.className = "border-b border-gray-600";
+  // put data inside row
+  row.innerHTML = `
+    <td class="px-6 py-4 ${task.isCompleted ? "completed" : ""}">${
+    task.name
+  }</td>
+    <td class="px-6 py-4 text-center">
+      <button onclick="toggle(${index})" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Toggle</button>
+    </td>
+    <td class="px-6 py-4 text-center">
+      <button onclick="deleteTask(${index})" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete</button>
+    </td>
+  `;
+  table.appendChild(row);
 }
+/*
+using to rebuild table because delete note and because change arrange tasks
+*/
 
-// display data from table
-
-function displayData() {
-  table.innerHTML = addNotes();
-  checkAllDone();
+function rebuildTable() {
+  table.innerHTML = "";
+  data.forEach((task, i) => appendTaskToTable(i, task));
 }
-
-// change state completed from table using index
-
+/*
+change state note is complted or not
+*/
 function toggle(index) {
   data[index].isCompleted = !data[index].isCompleted;
-  displayData();
+  updateTaskRow(index);
+  updateMessage();
 }
+/*
+update row only after completed
+*/
 
-// delete  tasks using index of array
-
-function deleteTask(i) {
-  data.splice(i, 1);
-  displayData();
-}
-
-// show message done if all tasks is done
-
-function checkAllDone() {
-  // every using return true if all element is true else false
-  const allDone = data.length > 0 && data.every((el) => el.isCompleted);
-  // check all tasks is all done
-  switch (allDone) {
-    case true:
-      message.classList.remove("hidden");
-      break;
-    default:
-      message.classList.add("hidden");
+function updateTaskRow(index) {
+  const row = table.querySelector(`tr[data-index="${index}"]`);
+  if (row) {
+    row.children[0].classList.toggle("completed", data[index].isCompleted);
+    row.children[0].textContent = data[index].name;
   }
+}
+// delete task in table
+function deleteTask(index) {
+  data.splice(index, 1);
+  rebuildTable(); // indices need to be updated
+  updateMessage();
+}
+// check tasks is complted or not and show message
+function updateMessage() {
+  const allDone = data.length > 0 && data.every((task) => task.isCompleted);
+  message.classList.toggle("hidden", !allDone);
 }
